@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.0.0)
 ##################
 # Project settings
 
-project (FreiburgNetworkSyncBox VERSION 0.1 LANGUAGES CXX)
+project (UPennNetworkSyncbox VERSION 0.1 LANGUAGES C CXX)
 
 ######################
 # Compilation settings
@@ -48,18 +48,23 @@ set (NETWORKSYNCBOX_DEFINES)
 # Source files
 
 add_executable (${PROJECT_NAME} "${BUILD_TYPE}"
-  src/FreiburgNetworkSyncBox.cpp
+  src/UPennNetworkSyncbox.cpp
 
   ../includes/Utils.cpp
 
   src/Config.cpp
-  src/FtdCard.cpp
+
+  src/Plugin.cpp
+  src/u3.c
+  src/u3Extended.c
 
   #src/NetClient.h
   #src/Config.h
   #src/Utils.h
-  #src/FtdCard.h
+  #src/u3.h
+  #src/u3Extended.h
   #src/libusb.h
+  #src/labjackusb.h
 )
 
 ####################
@@ -75,6 +80,11 @@ find_package(PkgConfig REQUIRED)
     pkg_check_modules(libusb REQUIRED libusb-1.0)
 find_library(LIBUSB_LIBRARY NAMES usb-1.0)
 
+# TODO: JPB: I'm not sure why find_package for liblabkjackusb doesn't work
+#find_package(PkgConfig REQUIRED)
+#    pkg_check_modules(liblabjackusb REQUIRED liblabjackusb-2.7.0)
+find_library(LIBLABJACKUSB_LIBRARY NAMES labjackusb-2.7.0)
+
 ############################
 # Set includes and libraries
 
@@ -88,6 +98,7 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 target_link_libraries (${PROJECT_NAME}
   ${WSOCK_LIB}
   ${LIBUSB_LIBRARY}
+  ${LIBLABJACKUSB_LIBRARY}
 )
 
 target_compile_definitions (${PROJECT_NAME} PUBLIC
@@ -99,6 +110,6 @@ target_compile_definitions (${PROJECT_NAME} PUBLIC
 # Update build date-stamp in command-line help on each build.
 
 add_custom_command (TARGET ${PROJECT_NAME} PRE_BUILD
-  COMMAND ${CMAKE_COMMAND} -E touch ${PROJECT_SOURCE_DIR}/src/FreiburgNetworkSyncBox.cpp
+  COMMAND ${CMAKE_COMMAND} -E touch ${PROJECT_SOURCE_DIR}/src/UPennNetworkSyncbox.cpp
 )
 
