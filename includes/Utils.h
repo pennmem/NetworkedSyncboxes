@@ -55,8 +55,7 @@ namespace SP {
     uint64_t val = To_uint64(str);
     if (onetozero) {
       if (val == 0) {
-        throw std::runtime_error("Value 0 in FreiburgNetworkSyncBox config where minimum "
-            "allowed is 1.");
+        throw std::runtime_error("Value 0 where minimum allowed is 1.");
       }
       val--;
     }

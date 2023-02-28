@@ -42,7 +42,7 @@ endif(APPLE)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 set (CMAKE_CXX_FLAGS_DEBUG "-O0 -g -fno-omit-frame-pointer")
 set (CMAKE_CXX_FLAGS_RELEASE "-O3 -g -ffast-math -fno-finite-math-only")
-set (FREIBURGNETWORKSYNCBOX_DEFINES)
+set (NETWORKSYNCBOX_DEFINES)
 
 ##############
 # Source files
@@ -50,15 +50,16 @@ set (FREIBURGNETWORKSYNCBOX_DEFINES)
 add_executable (${PROJECT_NAME} "${BUILD_TYPE}"
   src/FreiburgNetworkSyncBox.cpp
 
-  src/FtdCard.h
-  src/FtdCard.cpp
-  src/Config.h
   src/Config.cpp
-  src/NetClient.h
-  src/Utils.h
-  src/Utils.cpp
+  src/FtdCard.cpp
 
-  src/libusb.h
+  ../includes/Utils.cpp
+
+  #src/NetClient.h
+  #src/Config.h
+  #src/Utils.h
+  #src/FtdCard.h
+  #src/libusb.h
 )
 
 ####################
@@ -72,24 +73,25 @@ endif (WIN32)
 
 find_package(PkgConfig REQUIRED)
     pkg_check_modules(libusb REQUIRED libusb-1.0)
-find_library(LIBUSB_1_LIBRARY NAMES usb-1.0)
+find_library(LIBUSB_LIBRARY NAMES usb-1.0)
 
 ############################
 # Set includes and libraries
 
 target_include_directories (${PROJECT_NAME} PUBLIC
   ${PROJECT_SOURCE_DIR}/src
+  ${PROJECT_SOURCE_DIR}/../includes
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 target_link_libraries (${PROJECT_NAME}
   ${WSOCK_LIB}
-  ${LIBUSB_1_LIBRARY}
+  ${LIBUSB_LIBRARY}
 )
 
 target_compile_definitions (${PROJECT_NAME} PUBLIC
-  ${FREIBURGNETWORKSYNCBOX_DEFINES}
+  ${NETWORKSYNCBOX_DEFINES}
 )
 
 
