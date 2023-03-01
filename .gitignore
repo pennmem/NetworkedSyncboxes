@@ -11,6 +11,6 @@ tags
 html
 latex
 
-# Dist folder (build dir)
-dist/**
+# Dist folders (build dir)
+*/dist/**
 

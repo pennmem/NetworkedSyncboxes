@@ -85,7 +85,6 @@ const char* TurnLEDOff(){
 
 //THREADED sync pulse. used because USLEEP is called in ExecuteSyncPulse. don't want the whole app to sleep.
 long SyncPulse(){
-    
     pthread_t t1 ; // declare 2 threads.
     pthread_create( &t1, NULL, ExecuteSyncPulse, NULL); // create a thread running function1
     
