@@ -12,5 +12,5 @@ html
 latex
 
 # Dist folders (build dir)
-*/dist/**
+dist*
 
