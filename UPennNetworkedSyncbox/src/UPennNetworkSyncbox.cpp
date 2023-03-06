@@ -20,25 +20,25 @@ bool Run(SP::Sock& soc) {
         continue;
       }
 
-      if (cmd.at(0) == "FNSBSYNCPULSE") {
+      if (cmd.at(0) == "NSBSYNCPULSE") {
         SyncPulse();
-      } else if (cmd.at(0) == "FNSBHEARTBEAT") {
-        soc.Send("FNSBHEARTBEAT_OK");
-      } else if (cmd.at(0) == "FNSBOPENUSB") {
+      } else if (cmd.at(0) == "NSBHEARTBEAT") {
+        soc.Send("NSBHEARTBEAT_OK");
+      } else if (cmd.at(0) == "NSBOPENUSB") {
         auto openMsg = OpenUSB();
         std::cerr << openMsg << std::endl;
         if (strcmp(openMsg, "didn't open USB...") == 0) {
-          soc.Send(std::string("FNSBERROR: ") + SP::CleanError("Syncbox didn't open"));
+          soc.Send(std::string("NSBERROR,") + SP::CleanError("Syncbox didn't open"));
           soc.Close();
           return -4;
         }
-        soc.Send("FNSBOPENUSB_OK");
-      } else if (cmd.at(0) == "FNSBCLOSEUSB") {
+        soc.Send("NSBOPENUSB_OK");
+      } else if (cmd.at(0) == "NSBCLOSEUSB") {
         std::cerr << CloseUSB() << std::endl;
         soc.Send("FNSCLOSEUSB_OK");
         break;
       } else {
-        soc.Send(std::string("FNSBERROR: ") + SP::CleanError("UPennNetworkSyncbox command not "
+        soc.Send(std::string("NSBERROR,") + SP::CleanError("UPennNetworkSyncbox command not "
               "recognized:  \"", cmd.at(0), "\""));
       }
     }
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
     }
     catch (std::exception &ex) {
       if (soc.CanSend(false)) {
-        std::string errmsg = std::string("FNSBERROR,") + SP::CleanStr(ex.what());
+        std::string errmsg = std::string("NSBERROR,") + SP::CleanStr(ex.what());
         soc.Send(errmsg, false);
       }
       throw;
