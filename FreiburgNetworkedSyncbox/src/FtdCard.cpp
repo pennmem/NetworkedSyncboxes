@@ -158,16 +158,16 @@ namespace SP {
           continue;
         }
   
-        if (cmd.at(0) == "FNSBSYNCPULSE") {
+        if (cmd.at(0) == "NSBSYNCPULSE") {
           this->allOn();
-        } else if (cmd.at(0) == "FNSBHEARTBEAT") {
-          soc.Send("FNSBHEARTBEAT_OK");
-        } else if (cmd.at(0) == "FNSBOPENUSB") {
-          soc.Send("FNSBOPENUSB_OK");
-        } else if (cmd.at(0) == "FNSBCLOSEUSB") {
+        } else if (cmd.at(0) == "NSBHEARTBEAT") {
+          soc.Send("NSBHEARTBEAT_OK");
+        } else if (cmd.at(0) == "NSBOPENUSB") {
+          soc.Send("NSBOPENUSB_OK");
+        } else if (cmd.at(0) == "NSBCLOSEUSB") {
           return;
         } else {
-          soc.Send(std::string("FNSBERROR,") + CleanError("FreiburgNetworkSyncBox command not "
+          soc.Send(std::string("NSBERROR,") + CleanError("FreiburgNetworkSyncBox command not "
                 "recognized:  \"", cmd.at(0), "\""));
         }
       }

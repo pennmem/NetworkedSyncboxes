@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
     }
     catch (std::exception &ex) {
       if (soc.CanSend(false)) {
-        std::string errmsg = std::string("FNSBERROR,") + SP::CleanStr(ex.what());
+        std::string errmsg = std::string("NSBERROR,") + SP::CleanStr(ex.what());
         soc.Send(errmsg, false);
       }
       throw;

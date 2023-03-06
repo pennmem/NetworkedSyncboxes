@@ -2,6 +2,6 @@
 
 echo "STARTING TEST"
 
-{ echo "FNSBOPENUSB"; echo "FNSBSYNCPULSE"; sleep 1; echo "FNSBSYNCPULSE"; sleep 1; echo "FNSBSYNCPULSE"; echo "FNSBCLOSEUSB"; cat; } | nc 127.0.0.1 8903
+{ echo "NSBOPENUSB"; echo "NSBSYNCPULSE"; sleep 1; echo "NSBSYNCPULSE"; sleep 1; echo "NSBSYNCPULSE"; echo "NSBCLOSEUSB"; cat; } | nc 127.0.0.1 8903
 
 echo "ENDING TEST"
