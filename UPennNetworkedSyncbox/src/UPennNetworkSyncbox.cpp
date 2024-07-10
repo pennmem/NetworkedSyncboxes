@@ -26,8 +26,11 @@ bool Run(SP::Sock& soc) {
         soc.Send("NSBHEARTBEAT_OK");
       } else if (cmd.at(0) == "NSBOPENUSB") {
         auto openMsg = OpenUSB();
-        std::cerr << openMsg << std::endl;
-        if (strcmp(openMsg, "didn't open USB...") == 0) {
+        if (IsUSBOpen()) {
+          std::cerr << "Syncbox connected.\n";
+        }
+        else {
+          std::cerr << "Could not connect to the Syncbox!\n";
           soc.Send(std::string("NSBERROR,") + SP::CleanError("Syncbox didn't open"));
           soc.Close();
           return -4;
@@ -98,6 +101,7 @@ int main(int argc, char* argv[]) {
           std::cerr << "Error: " << ex.what() << "\n";
         }
       }
+      soc.Close();
     }
   }
   catch (std::exception &ex) {

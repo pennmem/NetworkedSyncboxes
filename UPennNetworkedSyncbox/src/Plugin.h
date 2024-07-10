@@ -3,6 +3,7 @@
 
 const char* OpenUSB();
 const char* CloseUSB();
+bool IsUSBOpen();
 const char* TurnLEDOn();
 const char* TurnLEDOff();
 long SyncPulse();

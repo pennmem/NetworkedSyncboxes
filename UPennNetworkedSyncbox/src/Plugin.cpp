@@ -67,6 +67,10 @@ const char* CloseUSB(){
     }
 }
 
+bool IsUSBOpen() {
+  return isDeviceOpen;
+}
+
 const char* TurnLEDOn(){
     if(isDeviceOpen){
         toggleHandleLEDOn(hDevice, syncChannel);
