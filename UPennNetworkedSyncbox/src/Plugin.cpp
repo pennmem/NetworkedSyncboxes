@@ -1,5 +1,5 @@
 /*
-	This is a simple plugin, a bunch of functions that do simple things.
+    This is a simple plugin, a bunch of functions that do simple things.
 */
 
 #include "Plugin.h"
@@ -37,12 +37,16 @@ long syncOnSystemTime = 0;
 
 //u3.c
 const char* OpenUSB(){
+    if (isDeviceOpen) {
+        return "Already open.";
+    }
+
     int localID;
     //long error;
-    
+
     //Open first found U3 over USB
     localID = -1;
-    
+
     hDevice = openUSB(localID);
     if(hDevice != NULL){
         isDeviceOpen = true;
@@ -91,7 +95,7 @@ const char* TurnLEDOff(){
 long SyncPulse(){
     pthread_t t1 ; // declare 2 threads.
     pthread_create( &t1, NULL, ExecuteSyncPulse, NULL); // create a thread running function1
-    
+
     //return syncTimeBeforePulseSeconds;
     return syncOnSystemTime;
 }
@@ -104,57 +108,56 @@ void * ExecuteSyncPulse(void * argument){
         srand (static_cast <unsigned> (time(0)));
         isRandomSeedSet = true;
     }
-    
+
     float pulseTimeSeconds = 0.02f; //TODO: make this a parameter???   --> 10MS
     int pulseTimeMilliseconds = (int)(pulseTimeSeconds*1000);
-    
+
     //turn on pulse
     if(isDeviceOpen){
         struct timeval tv;
         gettimeofday(&tv, NULL);
-        
+
         syncOnSystemTime = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
         toggleHandleLEDOn(hDevice, syncChannel);
     }
-    
+
     //sleep for pulselength
     int microseconds = pulseTimeMilliseconds*1000;
     usleep(microseconds); //sleep for the random time to wait before the pulse
-    
+
     //turn off pulse
     if(isDeviceOpen){
         toggleHandleLEDOff(hDevice, syncChannel);
     }
-    
+
     return 0;
 }
 
 const char* StimPulse(float durationSeconds, float freqHz, bool doRelay){
-    
     doRelay = false;//doRelay = false?
-    
+
     if(doRelay){
         //set relay 1 on
         //sleep (.3);
         //set relay 1 off
     }
-    
+
     /*
      79          divisor     = int(250)
      80          clock_rate  = 1000000/divisor
      81          timer_val   = int(.5 * clock_rate / freqhz)
      82          num_cycles  = int(round(duration * freqhz))
      83*/
-    
+
     float divisor = 250.0f;
-    
+
     float clock_rate = 10000000.0f/divisor;
-    
+
     int timerVal = (int)(0.5f * clock_rate / freqHz);
     double timerValDouble = (double)timerVal;
-    
+
     int numCycles = (int)(round(durationSeconds * freqHz));
-    
+
     /*
      84          # Set the timer clock base and divisor
      85
@@ -169,11 +172,11 @@ const char* StimPulse(float durationSeconds, float freqHz, bool doRelay){
      94          # print ''
      95
      96*/
-    
+
     int tc_base = 3; //48Mhz Clock
-    
-    
-    
+
+
+
     /*
      97          # Only Allow 7.8125 Hz to 50 Hz
      98
@@ -196,19 +199,18 @@ const char* StimPulse(float durationSeconds, float freqHz, bool doRelay){
      115              sys.exit(0)
      116
      */
-    
+
     if(freqHz < 7.8125 || freqHz > 50){ //if frequency is out of bounds
         //exit(0);
         return ("freqhz Out of Range, Must be within 7.8125 and 50 Hz.");
     }
-    
+
     if(durationSeconds < .1f || durationSeconds > 20.0f){ //if duration is out of bounds
         //exit(0);
         return ("Duration Out of Range, Must be between .1 and 20 seconds");
     }
 
-     
-     
+
      /*
      117          # Set the timer/counter pin offset to 4, which will put the first
      118          # timer/counter on FIO4 and the second on FIO5.
@@ -216,13 +218,13 @@ const char* StimPulse(float durationSeconds, float freqHz, bool doRelay){
      120          self.configIO(TimerCounterPinOffset = 4, EnableCounter1 = True, EnableCounter0 = None, NumberOfTimersEnabled = 2, FIOAnalog = None, EIOAnalog = None, EnableUART = None)
      121
       */
-    
+
     int TimerCounterPinOffset = 4;
     long EnableCounter1 = 1;
     long EnableCounter0 = 0;
     int NumberOfTimersEnabled = 2;
 
-    
+
     /*
      122          # Run at slower speed during debug, so LED flashing can be seen
      123          # Since we are using clock with divisor support, Counter0 is not available.
@@ -231,24 +233,24 @@ const char* StimPulse(float durationSeconds, float freqHz, bool doRelay){
      126          self.configTimerClock( TimerClockBase = tc_base, TimerClockDivisor = divisor)
      127
      */
-    
-    
+
+
     /*
      128          # Configure timer1 for the number of pulses before stopping timer0
      129          timer_num   = 1
      130          mode        = 9
      131          self.writeRegister(7100+(2*timer_num), [mode, num_cycles])
-     132   
+     132
      */
-    
+
     /*
      133          # Configure timer0 for frequency mode 
      134          timer_num   = 0 
      135          mode        = 7 
      136          self.writeRegister(7100+(2*timer_num), [mode, timer_val])
      */
-    
-    
+
+
     //aEnableTimers = An array where each element specifies whether that timer is
     //                enabled.  Timers must be enabled in order starting from 0, so
     //                for instance, Timer1 cannot be enabled without enabling Timer
@@ -259,8 +261,8 @@ const char* StimPulse(float durationSeconds, float freqHz, bool doRelay){
     for(int i = 0; i < NumberOfTimersEnabled; i++){
         aEnableTimers[i] = 1; //nonzero --> enabled timer
     }
-    
-                        
+
+
     //aEnableCounters = An array where each element specifies whether that counter
     //                  is enabled.  Counters do not have to be enabled in order
     //                  starting from 0, so Counter1 can be enabled when Counter0
@@ -268,21 +270,21 @@ const char* StimPulse(float durationSeconds, float freqHz, bool doRelay){
     //                  specifies to enable that counter.  For the U3, this array
     //                  must always have at least 2 elements.
     long aEnableCounters[2] = {EnableCounter0, EnableCounter1};
-                        
+
     //aTimerModes = An array where each element is a constant specifying the mode
     //              for that timer.  For the U3, this array must always have at
     //              least 2 elements.
     long timer0Mode = 7;
     long timer1Mode = 9;
     long aTimerModes[2] = {timer0Mode, timer1Mode};
-                        
+
     //aTimerValues = An array where each element specifies the initial value for
     //               that timer.  For the U3, this array must always have at least
     //               2 elements.
     double aTimerValues[2] = {timerValDouble,(double)numCycles};
-    
-    
+
+
     configTC(hDevice, TimerCounterPinOffset, NumberOfTimersEnabled, aEnableTimers, aEnableCounters, tc_base, divisor, aTimerModes, aTimerValues);
-    
+
     return "finished stim pulse!";
 }
