@@ -33,23 +33,28 @@ int main(int argc, char* argv[]) {
   config_file = argv[3];
 
   try {
-    SP::Sock soc;
-    SP::Net::Listener listener(std::to_string(port));
-    listener.Accept(soc);
-    //SP::Net::Connect(soc, host, std::to_string(port));
-    try {
-      SP::Config config{config_file};
-      SP::FtdCard ftd_card(config, true);
-      if (!ftd_card.Init(soc)) { return -4; }
-      ftd_card.Run();
-      std::cerr << "Finished running" << std::endl;
-    }
-    catch (std::exception &ex) {
-      if (soc.CanSend(false)) {
-        std::string errmsg = std::string("NSBERROR,") + SP::CleanStr(ex.what());
-        soc.Send(errmsg, false);
+    while(true) {
+      SP::Sock soc;
+      SP::Net::Listener listener(std::to_string(port));
+      std::cout << "Listening on port: " << port << "\n";
+      listener.Accept(soc);
+      //SP::Net::Connect(soc, host, std::to_string(port));
+      try {
+        SP::Config config{config_file};
+        SP::FtdCard ftd_card(config, true);
+        if (!ftd_card.Init(soc)) { return -4; }
+        ftd_card.Run();
+        std::cerr << "Finished running" << std::endl;
       }
-      throw;
+      catch (std::exception &ex) {
+        if (soc.CanSend(false)) {
+          std::string errmsg = std::string("NSBERROR,") + SP::CleanStr(ex.what());
+          soc.Send(errmsg, false);
+        }
+        else {
+          std::cerr << "Error: " << ex.what() << "\n";
+        }
+      }
     }
   }
   catch (std::exception &ex) {

@@ -174,7 +174,7 @@ namespace SP {
     }
     catch (std::runtime_error& e) {
       cerr << e.what() << endl;;
-      // Connection closed, so proceed to terminate.
+      // Connection closed, so conclude this run.
     }
   }
 
