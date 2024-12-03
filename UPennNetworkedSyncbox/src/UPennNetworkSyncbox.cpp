@@ -1,5 +1,6 @@
+#include <iostream>
 #include "NetClient.h"
-#include "Config.h"
+//#include "Config.h"
 #include "Utils.h"
 #include "Plugin.h"
 
@@ -60,11 +61,11 @@ bool Run(SP::Sock& soc) {
 int main(int argc, char* argv[]) {
   unsigned long long port = 0;
   std::string host;
-  std::string config_file;
+  //std::string config_file;
 
-  if (argc < 4) {
+  if (argc < 3) {
     std::cerr << "UPennNetworkSyncbox, " << MYTIMESTAMP << std::endl;
-    std::cerr << argv[0] << " [host] [port] [config_file]" << std::endl;
+    std::cerr << argv[0] << " [host] [port]" << std::endl;
     return -1;
   }
 
@@ -78,7 +79,7 @@ int main(int argc, char* argv[]) {
     return -2;
   }
 
-  config_file = argv[3];
+  //config_file = argv[3];
 
   try {
     while(true) {
@@ -88,7 +89,7 @@ int main(int argc, char* argv[]) {
       listener.Accept(soc);
       //SP::Net::Connect(soc, host, std::to_string(port));
       try {
-        SP::Config config{config_file};
+        //SP::Config config{config_file};
 
         Run(soc);
       }
